@@ -1,30 +1,58 @@
 function sellProduct(id){
- let p=getProducts(), s=getSales(), today=new Date().toDateString();
 
- p=p.map(x=>{
-  if(x.id===id && x.qty>0){
-   x.qty--;
-   s.push({name:x.name,price:x.price,date:today,time:new Date().toLocaleTimeString()});
-   generateReceipt(x);
+  let products = getProducts();
+  let sales = getSales();
+
+  let qty = +document.getElementById("sell-"+id).value || 1;
+
+  let p = products.find(x => x.id === id);
+
+  if(!p) return;
+
+  if(p.qty < qty){
+    alert("Not enough stock");
+    return;
   }
-  return x;
- });
 
- saveProducts(p); saveSales(s);
- loadProducts(); loadGrid(); loadSales(); drawChart();
+  p.qty -= qty;
+
+  sales.push({
+    id: Date.now(),
+    name: p.name,
+    qty,
+    price: p.price,
+    total: p.price * qty,
+    date: new Date().toLocaleDateString(),
+    time: new Date().toLocaleTimeString()
+  });
+
+  saveProducts(products);
+  saveSales(sales);
+
+  loadProducts();
+  loadSales();
+
+  if(typeof drawChart === "function") drawChart();
 }
 
 function loadSales(){
- let list=salesList;
- if(!list) return;
 
- let total=0;
- list.innerHTML="";
+  let list = document.getElementById("salesList");
+  list.innerHTML = "";
 
- getSales().forEach(s=>{
-  total+=s.price;
-  list.innerHTML+=`<div class="card">${s.name} - ₱${s.price}<br><small>${s.time}</small></div>`;
- });
+  let total = 0;
 
- list.innerHTML+=`<h3>Total ₱${total}</h3>`;
+  getSales().forEach(s=>{
+    total += s.total;
+
+    list.innerHTML += `
+      <div class="card">
+        <b>${s.name}</b><br>
+        Qty: ${s.qty} | ₱${s.total}<br>
+        <small>${s.date} ${s.time}</small>
+      </div>
+    `;
+  });
+
+  list.innerHTML += `<h3>Total: ₱${total}</h3>`;
 }
