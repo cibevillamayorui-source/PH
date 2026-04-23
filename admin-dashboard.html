@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div id="div_auto_1" class="header">Admin Dashboard</div>
+
+<div id="inventoryView">
+<div class="card">
+<input id="name" placeholder="Name">
+<input id="price" type="number" placeholder="Price">
+<input id="qty" type="number" placeholder="Qty">
+<input id="expiry" type="date">
+<input type="file" id="imageInput">
+<button id="btn_1" onclick="addProduct()">Add</button>
+</div>
+
+<div id="productList"></div>
+</div>
+
+<div id="salesView" style="display:none">
+<div id="salesList"></div>
+</div>
+
+<div id="dashboardView" style="display:none">
+<canvas id="chart"></canvas>
+</div>
+
+<div class="tabs">
+<div onclick="showTab('inventory');setActiveTab(this)" class="active">Inventory</div>
+<div onclick="showTab('sales');setActiveTab(this)">Sales</div>
+<div onclick="showTab('dashboard');setActiveTab(this)">Chart</div>
+<div onclick="logout()">Logout</div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/inventory.js"></script>
+<script src="js/sales.js"></script>
+<script src="js/receipt.js"></script>
+
+<script>
+loadProducts(); loadSales();
+
+function drawChart(){
+ let sales=getSales();
+ let map={};
+
+ sales.forEach(s=>{
+  map[s.date]=(map[s.date]||0)+s.price;
+ });
+
+ new Chart(document.getElementById("chart"),{
+  type:"bar",
+  data:{labels:Object.keys(map),datasets:[{data:Object.values(map)}]}
+ });
+}
+
+drawChart();
+</script>
+
+</body>
+</html>

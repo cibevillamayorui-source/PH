@@ -1,0 +1,8 @@
+{
+ "name":"Pharmacy",
+ "short_name":"Pharma",
+ "start_url":"index.html",
+ "display":"standalone",
+ "theme_color":"#4CAF50",
+ "background_color":"#ffffff"
+}
