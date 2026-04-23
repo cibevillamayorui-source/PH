@@ -1,23 +1,35 @@
-function goTo(p){location.href=p}
+function goTo(page){
+  window.location.href = page;
+}
 
 function logout(){
- localStorage.removeItem("role");
- location.href="index.html";
+  localStorage.removeItem("role");
+  location.href = "index.html";
 }
 
-function showTab(tab){
- ["inventoryView","salesView","dashboardView"].forEach(v=>{
-   let el=document.getElementById(v);
-   if(el) el.style.display="none";
- });
- document.getElementById(tab+"View").style.display="block";
-}
+function switchTab(tab, el){
 
-function setActiveTab(el){
- document.querySelectorAll(".tabs div").forEach(t=>t.classList.remove("active"));
- el.classList.add("active");
-}
+  const views = {
+    inventory: "inventoryView",
+    sales: "salesView",
+    dashboard: "dashboardView"
+  };
 
-if('serviceWorker' in navigator){
- navigator.serviceWorker.register('service-worker.js');
+  Object.values(views).forEach(id=>{
+    let v = document.getElementById(id);
+    if(v) v.style.display = "none";
+  });
+
+  let view = document.getElementById(views[tab]);
+  if(view) view.style.display = "block";
+
+  document.querySelectorAll(".tabs div").forEach(t=>{
+    t.classList.remove("active");
+  });
+
+  if(el) el.classList.add("active");
+
+  if(tab === "inventory") loadProducts();
+  if(tab === "sales") loadSales();
+  if(tab === "dashboard") drawChart();
 }
