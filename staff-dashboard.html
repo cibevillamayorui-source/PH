@@ -6,25 +6,69 @@
 </head>
 <body>
 
-<div id="div_auto_1" class="header">Staff</div>
+<div id="div_auto_1" class="header">Staff Dashboard</div>
 
-<div class="card">
-<input id="search" placeholder="Search" onkeyup="searchProduct()">
+<div class="dashboard">
+  <div class="box">Income<br><span id="income">₱0</span></div>
+  <div class="box">Sales<br><span id="salesCount">0</span></div>
 </div>
 
-<div id="productGrid" class="grid"></div>
+<div id="productList"></div>
+<div id="salesList"></div>
 
 <div class="tabs">
-<div onclick="loadGrid()">Products</div>
-<div onclick="logout()">Logout</div>
+  <div onclick="loadProducts()">Products</div>
+  <div onclick="loadSales()">Sales</div>
+  <div onclick="logout()">Logout</div>
 </div>
 
-<script src="app.js"></script>
 <script src="storage.js"></script>
 <script src="inventory.js"></script>
 <script src="sales.js"></script>
+<script src="app.js"></script>
 
-<script>loadGrid()</script>
+<script>
+
+function loadProducts(){
+
+  let list = document.getElementById("productList");
+  list.innerHTML = "";
+
+  getProducts().forEach(p=>{
+
+    let low = p.qty <= 5 ? "style='border:2px solid red'" : "";
+
+    list.innerHTML += `
+      <div class="card" ${low}>
+        ${p.image ? `<img id="img_1" src="${p.image}" width="60">` : ""}
+        <b>${p.name}</b><br>
+        ₱${p.price} | Stock: ${p.qty}<br>
+
+        <small>${p.expiry || ""}</small>
+
+        <input type="number" id="sell-${p.id}" value="1">
+        <button id="btn_1" onclick="sellProduct(${p.id})">Sell</button>
+      </div>
+    `;
+  });
+}
+
+function updateStaff(){
+
+  let sales = getSales();
+  let total = 0;
+
+  sales.forEach(s => total += s.total);
+
+  document.getElementById("income").innerText = "₱" + total;
+  document.getElementById("salesCount").innerText = sales.length;
+}
+
+loadProducts();
+loadSales();
+updateStaff();
+
+</script>
 
 </body>
 </html>
